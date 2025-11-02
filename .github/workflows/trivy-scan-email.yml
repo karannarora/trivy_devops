@@ -1,0 +1,64 @@
+name: Trivy Security Scan and Email Report
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update -y
+          sudo apt-get install trivy -y
+
+      - name: Run Trivy Scan (Filesystem)
+        run: |
+          echo "🔍 Running Trivy security and secret scan..."
+          trivy fs --scanners vuln,secret --exit-code 0 --format table -o trivy-scan-report.txt .
+          echo "✅ Trivy scan completed successfully!" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Trivy Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-scan-report
+          path: trivy-scan-report.txt
+
+      - name: Send Email with Report
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "🔒 Trivy Security Scan Report - ${{ github.repository }}"
+          to: ${{ secrets.RECIPIENT_EMAIL }}
+          from: "GitHub Actions <${{ secrets.EMAIL_USER }}>"
+          body: |
+            Hello 👋,
+
+            The **Trivy Security Scan** has completed successfully for repository:
+            **${{ github.repository }}**
+
+            ✅ Branch: ${{ github.ref_name }}
+            🕒 Triggered by: ${{ github.actor }}
+            📦 Commit: ${{ github.sha }}
+
+            The full vulnerability & secret scan report is attached below.
+
+            --
+            Regards,  
+            🧑‍💻 GitHub Security Bot  
+            (Automated Trivy Scan)
+          attachments: trivy-scan-report.txt
