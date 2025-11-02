@@ -41,9 +41,9 @@ jobs:
           server_address: smtp.gmail.com
           server_port: 587
           username: ${{ secrets.EMAIL_USER }}
-          password: ${{ secrets.EMAIL_PASS }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "🔒 Trivy Security Scan Report - ${{ github.repository }}"
-          to: ${{ secrets.RECIPIENT_EMAIL }}
+          to: ${{ secrets.EMAIL_RECIPIENT }}
           from: "GitHub Actions <${{ secrets.EMAIL_USER }}>"
           body: |
             Hello 👋,
