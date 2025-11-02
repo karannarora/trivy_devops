@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Trivy Security Demo — Trivyy</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>Trivy Security Demo</h1>
+    <p class="subtitle">Container &amp; Source scanning — demo app for vulnerability reporting</p>
+  </header>
+
+  <main class="card">
+    <section>
+      <h2>About this demo</h2>
+      <p>
+        This small static app demonstrates a working web page served by Nginx inside a Docker container.
+        We use <strong>Trivy</strong> to scan the container image and the application files.
+      </p>
+    </section>
+
+    <section>
+      <h2>Actions</h2>
+      <div class="buttons">
+        <button id="show-info">Show App Info</button>
+        <button id="run-scan" disabled title="Run Trivy from terminal">Run Trivy (Terminal)</button>
+      </div>
+      <p class="hint">Open a terminal in this project folder and run: <code>trivy fs .</code></p>
+    </section>
+
+    <section id="info" class="hidden">
+      <h2>App Info</h2>
+      <p><strong>Author:</strong> Karan Arora</p>
+      <p><strong>Project:</strong> Trivy container + fs scan demo</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Demo for DevSecOps course / mini project</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
